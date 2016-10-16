@@ -1,0 +1,7 @@
+---
+fixtures:
+#Currently, these module versions are managed independently of the control project's Puppetfile
+  repositories:
+    stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
+  symlinks:
+    jenkins_windows_agent: "#{source_dir}"
