@@ -1,6 +1,6 @@
 {
   "name": "ktreese-jenkins_windows_agent",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Kris Reese",
   "summary": "Module for deploying a Jenkins Agent for Windows via the swarm jar",
   "license": "Apache-2.0",
