@@ -102,9 +102,9 @@ class jenkins_windows_agent (
 
   $jenkins_dirs.each |Integer $index, String $dir| {
     jenkins_windows_agent::create_dir { $dir:
-      drive   => $agent_drive,
-      path    => $dir,
-      before  => Nssm::Install[$service_name],
+      drive  => $agent_drive,
+      path   => $dir,
+      before => Nssm::Install[$service_name],
     }
   }
 
