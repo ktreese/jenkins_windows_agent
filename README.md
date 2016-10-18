@@ -42,7 +42,9 @@ At a minimum, the jenkins\_master variable should be overridden via hiera, Puppe
 
 ```
 class { 'jenkins_windows_agent':
-  jenkins_master => 'http://your_jenkins_master_url:8080',
+  jenkins_master      => 'http://your_jenkins_master_url:8080',
+  jenkins_master_user => 'your_jenkins_master_user',
+  jenkins_master_pass => 'your_jenkins_master_pass',
 }
 ```
 
@@ -60,8 +62,12 @@ class { 'jenkins_windows_agent':
 
 ### Setup Requirements
 
-Override default values in the Puppet Console, or namespace the key/value pairs appropriately in the desired yaml hieradata file.  At minimum, you'll need to override the `jenkins_master` variable.
+Override default values in the Puppet Console, or namespace the key/value pairs appropriately in the desired yaml hieradata file.  At minimum, you'll need to override the `jenkins_master`, `jenkins_master_user`, and `jenkins_master_pass` variables to your environments specifications.
 
-For example, to override the jenkins\_master variable via hiera:
+For example, to override these variables via hiera:
 
-```jenkins_windows_agent::jenkins_master: http://your_jenkins_master_url:8080```
+```
+jenkins_windows_agent::jenkins_master: http://your_jenkins_master_url:8080
+jenkins_windows_agent::jenkins_master_user: jenkins
+jenkins_windows_agent::jenkins_master_pass: mypassword
+```
