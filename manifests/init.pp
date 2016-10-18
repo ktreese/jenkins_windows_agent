@@ -73,7 +73,7 @@ class jenkins_windows_agent (
     fail 'A password must be set when specifying a service user account'
   }
   if $::facts['os']['name'] != 'windows' {
-    fail "This modules is not supported on $facts['os']['name']"
+    fail "This modules is not supported on ${::facts['os']['name']}"
   }
 
   # 'choco install nssm' via Puppet fails; use counsyl/windows::nssm
