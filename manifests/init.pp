@@ -72,7 +72,7 @@ class jenkins_windows_agent (
   if ($service_user != 'LocalSystem') and (!$service_pass) {
     fail 'A password must be set when specifying a service user account'
   }
-  if $facts['os']['name'] != 'windows' {
+  if $::facts['os']['name'] != 'windows' {
     fail "This modules is not supported on $facts['os']['name']"
   }
 
