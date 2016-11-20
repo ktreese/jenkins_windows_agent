@@ -12,6 +12,10 @@
 
 This module will deploy the Jenkins Agent on Windows systems via the swarm jar and run it as a windows service using NSSM.
 
+## Module Dependencies
+
+Please review the [Dependencies](https://forge.puppet.com/ktreese/jenkins_windows_agent/dependencies) to ensure you have all that is required in order for this module to function properly.
+
 ## Module Description
 
 The Windows Jenkins Agent will be deployed with the following defaults:
@@ -38,7 +42,7 @@ This module includes a single class:
 
 `include jenkins_windows_agent`
 
-At a minimum, the jenkins\_master variable should be overridden via hiera, Puppet Console, or a resource like declaration:
+At a minimum, the `jenkins_master_url`, `jenkins_master_user`, and `jenkins_master_pass` variables should be overridden via hiera, Puppet Console, or inside of a resource like declaration:
 
 ```
 class { 'jenkins_windows_agent':
@@ -61,6 +65,8 @@ class { 'jenkins_windows_agent':
 ```
 
 ### Setup Requirements
+
+Please review the [Module Dependencies](#module-dependencies) section.
 
 Override default values in the Puppet Console, or namespace the key/value pairs appropriately in the desired yaml hieradata file.  At minimum, you'll need to override the `jenkins_master_url`, `jenkins_master_user`, and `jenkins_master_pass` variables to your environments specifications.
 
