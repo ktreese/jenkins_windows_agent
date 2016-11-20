@@ -3,8 +3,9 @@
 #### Table of Contents
 
 1. [Overview](#overview)
-2. [Module Description - What the module does and why it is useful](#module-description)
-3. [Classifcation Setup - The basics of getting started with jenkins\_windows\_agent](#classification-setup)
+2. [Module Dependencies - What are the dependencies](#module-dependencies)
+3. [Module Description - What the module does and why it is useful](#module-description)
+4. [Classifcation Setup - The basics of getting started with jenkins\_windows\_agent](#classification-setup)
     * [What the jenkins\_agent module affects](#what-the-jenkins_agent-module-affects)
     * [Setup requirements](#setup-requirements)
 
