@@ -44,6 +44,8 @@
 #   Defaults to false; assumption is made that an AD service account will be used
 #
 class jenkins_windows_agent (
+  $client_source       = undef,
+  $version             = $::jenkins_windows_agent::params::version,
   $client_url          = $::jenkins_windows_agent::params::client_url,
   $client_jar          = $::jenkins_windows_agent::params::client_jar,
   $verify_peer         = $::jenkins_windows_agent::params::verify_peer,
