@@ -72,6 +72,7 @@ class jenkins_windows_agent (
   $java                = $::jenkins_windows_agent::params::java,
 ) inherits ::jenkins_windows_agent::params {
 
+  $client_jar          = "swarm-client-${version}-jar-with-dependencies.jar"
   $client_url = $client_source ? {
     undef   => "https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/${version}/",
     default => $client_source,
