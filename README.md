@@ -1,13 +1,14 @@
-# jenkins\_windows\_agent
+# jenkins_windows_agent
 
-#### Table of Contents
+## Table of Contents
 
 1. [Overview](#overview)
 2. [Module Dependencies - What are the dependencies](#module-dependencies)
 3. [Module Description - What the module does and why it is useful](#module-description)
-4. [Classifcation Setup - The basics of getting started with jenkins\_windows\_agent](#classification-setup)
-    * [What the jenkins\_agent module affects](#what-the-jenkins_agent-module-affects)
-    * [Setup requirements](#setup-requirements)
+4. [Classifcation Setup - The basics of getting started with jenkins_windows_agent](#classification-setup)
+
+  - [What the jenkins_agent module affects](#what-the-jenkins_agent-module-affects)
+  - [Setup requirements](#setup-requirements)
 
 ## Overview
 
@@ -20,16 +21,16 @@ Please review the [Dependencies](https://forge.puppet.com/ktreese/jenkins_window
 ## Module Description
 
 The Windows Jenkins Agent will be deployed with the following defaults:
- - swarm-client-1.22-jar-with-dependencies.jar
- - mode: exclusive
- - executors: 8
- - labels: windows
- - Agent Home: C:\opt\ci\jenkins
- - Agent Workspace: C:\opt\ci\jenkins\workspace
- - Jenkins Master: http://myjenkinsmaster.localhost:8080
- - java: jdk1.7.0\_79
- - service account: `LocalSystem`
 
+- swarm-client-1.22-jar-with-dependencies.jar
+- mode: exclusive
+- executors: 8
+- labels: windows
+- Agent Home: C:\opt\ci\jenkins
+- Agent Workspace: C:\opt\ci\jenkins\workspace
+- Jenkins Master: <http://myjenkinsmaster.localhost:8080>
+- java: jdk1.7.0_79
+- service account: `LocalSystem`
 
 Puppet will create a windows service `Jenkins_Agent` and set it to run as the `LocalSystem` account
 
@@ -53,9 +54,10 @@ class { 'jenkins_windows_agent':
 }
 ```
 
-### What the jenkins\_agent module affects
+### What the jenkins_agent module affects
 
-###### List of things that the module will alter:
+#### List of things that the module will alter:
+
 ```
  - Installs jdk7
  - Installs NSSM - the Non-Sucking Service Manager
@@ -69,7 +71,7 @@ class { 'jenkins_windows_agent':
 
 Please review the [Module Dependencies](#module-dependencies) section.
 
-Override default values in the Puppet Console, or namespace the key/value pairs appropriately in the desired yaml hieradata file.  At minimum, you'll need to override the `jenkins_master_url`, `jenkins_master_user`, and `jenkins_master_pass` variables to your environments specifications.
+Override default values in the Puppet Console, or namespace the key/value pairs appropriately in the desired yaml hieradata file. At minimum, you'll need to override the `jenkins_master_url`, `jenkins_master_user`, and `jenkins_master_pass` variables to your environments specifications.
 
 For example, to override these variables via hiera:
 

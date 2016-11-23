@@ -43,6 +43,13 @@
 #   Boolean to control whether the service_user should be created
 #   Defaults to false; assumption is made that an AD service account will be used
 #
+# [*client_source*]
+#   File source for jenkins slave jar. Default pulls from https://repo.jenkins-ci.org
+#
+# [*version*]
+#   The version of the swarm client code. Default is '1.22'. This should match the plugin version on the master
+#
+
 class jenkins_windows_agent (
   $client_source       = $::jenkins_windows_agent::params::client_source,
   $version             = $::jenkins_windows_agent::params::version,
