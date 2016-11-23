@@ -1,6 +1,10 @@
+# Class: jenkins_windows_agent::params
+#
+#
 class jenkins_windows_agent::params {
-  $client_url          = 'https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/1.22/'
-  $client_jar          = 'swarm-client-1.22-jar-with-dependencies.jar'
+  $client_source       = undef
+  $version             = '1.22'
+  $client_url          = undef
   $verify_peer         = false
   $swarm_mode          = 'exclusive'
   $swarm_executors     = '8'
