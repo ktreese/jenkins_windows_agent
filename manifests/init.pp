@@ -53,7 +53,6 @@
 class jenkins_windows_agent (
   $client_source       = $::jenkins_windows_agent::params::client_source,
   $version             = $::jenkins_windows_agent::params::version,
-  $client_jar          = $::jenkins_windows_agent::params::client_jar,
   $verify_peer         = $::jenkins_windows_agent::params::verify_peer,
   $swarm_mode          = $::jenkins_windows_agent::params::swarm_mode,
   $swarm_executors     = $::jenkins_windows_agent::params::swarm_executors,
