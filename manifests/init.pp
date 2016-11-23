@@ -44,9 +44,8 @@
 #   Defaults to false; assumption is made that an AD service account will be used
 #
 class jenkins_windows_agent (
-  $client_source       = undef,
+  $client_source       = $::jenkins_windows_agent::params::client_source,
   $version             = $::jenkins_windows_agent::params::version,
-  $client_url          = $::jenkins_windows_agent::params::client_url,
   $client_jar          = $::jenkins_windows_agent::params::client_jar,
   $verify_peer         = $::jenkins_windows_agent::params::verify_peer,
   $swarm_mode          = $::jenkins_windows_agent::params::swarm_mode,
@@ -65,6 +64,11 @@ class jenkins_windows_agent (
   $create_user         = $::jenkins_windows_agent::params::create_user,
   $java                = $::jenkins_windows_agent::params::java,
 ) inherits ::jenkins_windows_agent::params {
+
+  $client_url = $client_source ? {
+    undef   => "https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/${version}/",
+    default => $client_source,
+  }
 
   #if service_user is set and service_interactive is true; fail
   if ($service_user != 'LocalSystem') and ($service_interactive) {
