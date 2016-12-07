@@ -6,6 +6,12 @@
 #
 #  == Most params are self explanatory
 #
+# [*client_source*]
+#   File source for jenkins slave jar. Default pulls from https://repo.jenkins-ci.org
+#
+# [*version*]
+#   The version of the swarm client code. Default is '1.22'. This should match the plugin version on the master
+#
 # [*verify_peer*]
 #   Boolean: defaults to false
 #   Used in remote_file type to control whether or not to require SSL verification of the the remote server
@@ -43,9 +49,10 @@
 #   Boolean to control whether the service_user should be created
 #   Defaults to false; assumption is made that an AD service account will be used
 #
+#
 class jenkins_windows_agent (
-  $client_url          = $::jenkins_windows_agent::params::client_url,
-  $client_jar          = $::jenkins_windows_agent::params::client_jar,
+  $client_source       = $::jenkins_windows_agent::params::client_source,
+  $version             = $::jenkins_windows_agent::params::version,
   $verify_peer         = $::jenkins_windows_agent::params::verify_peer,
   $swarm_mode          = $::jenkins_windows_agent::params::swarm_mode,
   $swarm_executors     = $::jenkins_windows_agent::params::swarm_executors,
@@ -63,6 +70,12 @@ class jenkins_windows_agent (
   $create_user         = $::jenkins_windows_agent::params::create_user,
   $java                = $::jenkins_windows_agent::params::java,
 ) inherits ::jenkins_windows_agent::params {
+
+  $client_jar = "swarm-client-${version}-jar-with-dependencies.jar"
+  $client_url = $client_source ? {
+    'repo.jenkins-ci.org' => "https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/${version}/",
+    default               => $client_source,
+  }
 
   #if service_user is set and service_interactive is true; fail
   if ($service_user != 'LocalSystem') and ($service_interactive) {
