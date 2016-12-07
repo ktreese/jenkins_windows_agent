@@ -2,9 +2,8 @@
 #
 #
 class jenkins_windows_agent::params {
-  $client_source       = undef
+  $client_source       = 'repo.jenkins-ci.org'
   $version             = '1.22'
-  $client_url          = undef
   $verify_peer         = false
   $swarm_mode          = 'exclusive'
   $swarm_executors     = '8'
