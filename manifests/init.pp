@@ -6,8 +6,11 @@
 #
 #  == Most params are self explanatory
 #
-# [*client_source*]
-#   File source for jenkins slave jar. Default pulls from https://repo.jenkins-ci.org
+# [*client_url*]
+#   Url to download the client jar from, without the filename.
+#
+# [*client_jar*]
+#   Filename of the client jar.
 #
 # [*version*]
 #   The version of the swarm client code. Default is '1.22'. This should match the plugin version on the master
@@ -51,7 +54,8 @@
 #
 #
 class jenkins_windows_agent (
-  $client_source       = $::jenkins_windows_agent::params::client_source,
+  $client_url          = $::jenkins_windows_agent::params::client_url,
+  $client_jar          = $::jenkins_windows_agent::params::client_jar,
   $version             = $::jenkins_windows_agent::params::version,
   $verify_peer         = $::jenkins_windows_agent::params::verify_peer,
   $swarm_mode          = $::jenkins_windows_agent::params::swarm_mode,
@@ -67,15 +71,17 @@ class jenkins_windows_agent (
   $service_user        = $::jenkins_windows_agent::params::service_user,
   $service_pass        = $::jenkins_windows_agent::params::service_pass,
   $service_interactive = $::jenkins_windows_agent::params::service_interactive,
+  $service_std_out     = $::jenkins_windows_agent::params::service_std_out,
+  $service_err_out     = $::jenkins_windows_agent::params::service_err_out,
   $create_user         = $::jenkins_windows_agent::params::create_user,
-  $java                = $::jenkins_windows_agent::params::java,
+  $install_java        = $::jenkins_windows_agent::params::install_java,
+  $java_exe_path       = $::jenkins_windows_agent::params::java_exe_path,
+  $java_pkg_name       = $::jenkins_windows_agent::params::java_pkg_name,
+  $java_pkg_source     = $::jenkins_windows_agent::params::java_pkg_source,
+  $install_nssm        = $::jenkins_windows_agent::params::install_nssm,
+  $nssm_pkg_name       = $::jenkins_windows_agent::params::nssm_pkg_name,
+  $nssm_pkg_source     = $::jenkins_windows_agent::params::nssm_pkg_source,
 ) inherits ::jenkins_windows_agent::params {
-
-  $client_jar = "swarm-client-${version}-jar-with-dependencies.jar"
-  $client_url = $client_source ? {
-    'repo.jenkins-ci.org' => "https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/${version}/",
-    default               => $client_source,
-  }
 
   #if service_user is set and service_interactive is true; fail
   if ($service_user != 'LocalSystem') and ($service_interactive) {
@@ -89,20 +95,29 @@ class jenkins_windows_agent (
     fail "This modules is not supported on ${::facts['os']['name']}"
   }
 
-  # 'choco install nssm' via Puppet fails; use counsyl/windows::nssm
-  include windows::nssm
+  if $install_nssm {
+    ensure_resource(
+      'package',
+      $nssm_pkg_name, {
+        ensure   => present,
+        source   => $nssm_pkg_source,
+        provider => 'chocolatey',
+        before   => Nssm::Install[$service_name],
+      }
+    )
 
-  windows_env { 'nssm_install_env':
-    ensure    => present,
-    variable  => 'PATH',
-    mergemode => 'append',
-    value     => 'C:\Program Files\nssm-2.24\win64',
   }
 
-  package { 'jdk7':
-    ensure   => present,
-    provider => 'chocolatey',
-    before   => Nssm::Install[$service_name],
+  if $install_java {
+    ensure_resource(
+      'package',
+      $java_pkg_name, {
+        ensure   => present,
+        source   => $java_pkg_source,
+        provider => 'chocolatey',
+        before   => Nssm::Install[$service_name],
+      }
+    )
   }
 
   remote_file { $client_jar:
@@ -124,26 +139,52 @@ class jenkins_windows_agent (
   # Install the service
   nssm::install { $service_name:
     ensure       => present,
-    program      => $java,
+    program      => $java_exe_path,
     service_name => $service_name,
-    require      => Class[Windows::Nssm],
+    require      => [
+      Package[$nssm_pkg_name],
+      Package[$java_pkg_name],
+    ],
   }
 
   # Service Management
+  $swarm_labels_str = join($swarm_labels, " ")
+  $app_parameters = @("END_APP_PARAMETERS"/$L)
+    -jar ${agent_drive}${agent_home}${client_jar} \
+    -mode ${swarm_mode} \
+    -executors ${swarm_executors} \
+    -username ${jenkins_master_user} \
+    -password ${jenkins_master_pass} \
+    -master ${jenkins_master_url} \
+    -labels "${swarm_labels_str}" \
+    -fsroot ${agent_drive}${agent_home} \
+    -showHostName -name ${::fqdn} \
+    | END_APP_PARAMETERS
+
   nssm::set { $service_name:
     service_user        => $service_user,
     service_pass        => $service_pass,
     service_interactive => $service_interactive,
     create_user         => $create_user,
-    app_parameters      => "-jar ${agent_drive}${agent_home}${client_jar} -mode ${swarm_mode} -executors ${swarm_executors} -username ${jenkins_master_user} -password ${jenkins_master_pass} -master ${jenkins_master_url} -labels ${swarm_labels} -fsroot ${agent_drive}${agent_home}",
-    require             => Nssm::Install[$service_name],
+    app_std_out         => $service_std_out,
+    app_err_out         => $service_err_out,
+    app_parameters      => $app_parameters,
+    require             => [
+      Nssm::Install[$service_name],
+      Package[$nssm_pkg_name],
+      Package[$java_pkg_name],
+    ],
     notify              => Service[$service_name],
   }
 
   service { $service_name:
     ensure  => running,
     enable  => true,
-    require => Nssm::Set[$service_name],
+    require => [
+      Nssm::Install[$service_name],
+      Package[$nssm_pkg_name],
+      Package[$java_pkg_name],
+    ],
   }
 
 }
