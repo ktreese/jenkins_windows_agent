@@ -1,0 +1,11 @@
+jenkins_windows_agent::jenkins_master_user: 'jenkins_slave_user'
+jenkins_windows_agent::java: 'C:\\Program Files\\Java\\jre1.8.0_111\\bin\\java.exe'
+jenkins_windows_agent::jenkins_master_url: 'https://jenkins-master.contoso.com'
+jenkins_windows_agent::client_url: 'https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/2.2/'
+jenkins_windows_agent::client_jar: 'swarm-client-2.2-jar-with-dependencies.jar'
+jenkins_windows_agent::swarm_executors: '4'
+jenkins_windows_agent::swarm_labels:
+  - 'powershell'
+  - 'posh_ssh'
+  - 'powercli'
+  - 'remotely'
