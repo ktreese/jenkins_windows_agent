@@ -21,6 +21,6 @@ class jenkins_windows_agent::params {
   $service_interactive      = false
   $create_user              = false
   $jdk                      = 'jdk8'
-  $jdk_choco_version        = '8.0.131'
+  $jdk_choco_version        = 'latest'
   $java                     = '$ENV:JAVA_HOME\bin\java.exe'
 }
