@@ -8,7 +8,7 @@ class jenkins_windows_agent::params {
   $swarm_mode               = 'exclusive'
   $swarm_executors          = '8'
   $swarm_labels             = 'windows'
-  $disable_ssl_verification = '-disable_ssl_verification'
+  $disable_ssl_verification = '-disableSslVerification'
   $agent_drive              = 'C:'
   $agent_home               = '/opt/ci/jenkins/'
   $jenkins_dirs             = ['/opt/ci/jenkins/', '/opt/ci/jenkins/workspace/', '/tmp']
