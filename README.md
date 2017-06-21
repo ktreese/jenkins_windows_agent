@@ -22,14 +22,15 @@ Please review the [Dependencies](https://forge.puppet.com/ktreese/jenkins_window
 
 The Windows Jenkins Agent will be deployed with the following defaults:
 
-- swarm-client-1.22-jar-with-dependencies.jar
+- swarm-client-3.3-jar-with-dependencies.jar
 - mode: exclusive
 - executors: 8
 - labels: windows
 - Agent Home: C:\opt\ci\jenkins
 - Agent Workspace: C:\opt\ci\jenkins\workspace
 - Jenkins Master: <http://myjenkinsmaster.localhost:8080>
-- java: jdk1.7.0_79
+- java: latest choco jdk8 package
+- `disableSslVerification` swarm option enabled (override via hiera to undef if not needed)
 - service account: `LocalSystem`
 
 Puppet will create a windows service `Jenkins_Agent` and set it to run as the `LocalSystem` account
@@ -59,7 +60,7 @@ class { 'jenkins_windows_agent':
 #### List of things that the module will alter:
 
 ```
- - Installs jdk7
+ - Installs jdk8
  - Installs NSSM - the Non-Sucking Service Manager
  - Creates C:/tmp; C:/opt/ci/jenkins; C:/opt/ci/jenkins/workspace
  - Creates Jenkins_Agent service to run as LocalSystem via NSSM
