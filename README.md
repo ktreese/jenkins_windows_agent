@@ -22,7 +22,7 @@ Please review the [Dependencies](https://forge.puppet.com/ktreese/jenkins_window
 
 The Windows Jenkins Agent will be deployed with the following defaults:
 
-- swarm-client-3.3-jar-with-dependencies.jar
+- swarm-client-3.3.jar ([JENKINS-42138](https://issues.jenkins-ci.org/browse/JENKINS-42138) indicates this jar contains the dependencies)
 - mode: exclusive
 - executors: 8
 - labels: windows
