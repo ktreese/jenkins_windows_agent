@@ -4,6 +4,7 @@
 class jenkins_windows_agent::params {
   $client_source            = 'repo.jenkins-ci.org'
   $version                  = '3.3'
+  $client_jar               = "swarm-client-${version}.jar"
   $verify_peer              = false
   $swarm_mode               = 'exclusive'
   $swarm_executors          = '8'
