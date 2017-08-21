@@ -74,11 +74,10 @@ class jenkins_windows_agent (
   $java                     = $::jenkins_windows_agent::params::java,
 ) inherits ::jenkins_windows_agent::params {
 
-
-  # versioncmp function returns 1 if 3.3 is greater than $version
-  # version 3.3 is first version to remove '-jar-with-dependencies'
-  # portion of the name from the jar file name
-  if versioncmp('3.3', $version) > 0 {
+  # versioncmp function returns -1 if 2.2 is less than $version
+  # version 2.2 is last version to contain the portion '-jar-with-dependencies'
+  # as part of the jar file name
+  if versioncmp('2.2', $version) < 0 {
     $client_jar = "swarm-client-${version}.jar"
   } else {
     $client_jar = "swarm-client-${version}-jar-with-dependencies.jar"
