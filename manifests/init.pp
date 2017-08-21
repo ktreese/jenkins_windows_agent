@@ -53,7 +53,6 @@
 class jenkins_windows_agent (
   $client_source            = $::jenkins_windows_agent::params::client_source,
   $version                  = $::jenkins_windows_agent::params::version,
-  $client_jar               = $::jenkins_windows_agent::params::client_jar,
   $verify_peer              = $::jenkins_windows_agent::params::verify_peer,
   $swarm_mode               = $::jenkins_windows_agent::params::swarm_mode,
   $swarm_executors          = $::jenkins_windows_agent::params::swarm_executors,
@@ -74,6 +73,15 @@ class jenkins_windows_agent (
   $jdk_choco_version        = $::jenkins_windows_agent::params::jdk_choco_version,
   $java                     = $::jenkins_windows_agent::params::java,
 ) inherits ::jenkins_windows_agent::params {
+
+  # versioncmp function returns -1 if 2.2 is less than $version
+  # version 2.2 is last version to contain the portion '-jar-with-dependencies'
+  # as part of the jar file name
+  if versioncmp('2.2', $version) < 0 {
+    $client_jar = "swarm-client-${version}.jar"
+  } else {
+    $client_jar = "swarm-client-${version}-jar-with-dependencies.jar"
+  }
 
   $client_url = $client_source ? {
     'repo.jenkins-ci.org' => "https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/${version}/",
