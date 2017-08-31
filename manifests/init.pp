@@ -147,6 +147,7 @@ class jenkins_windows_agent (
     service_interactive => $service_interactive,
     create_user         => $create_user,
     app_parameters      => "-jar ${agent_drive}${agent_home}${client_jar} -mode ${swarm_mode} -executors ${swarm_executors} -username ${jenkins_master_user} -password ${jenkins_master_pass} -master ${jenkins_master_url} -labels ${swarm_labels} -fsroot ${agent_drive}${agent_home} ${disable_ssl_verification}",
+    app_directory       => "${agent_drive}${agent_home}",
     require             => Nssm::Install[$service_name],
     notify              => Service[$service_name],
   }
