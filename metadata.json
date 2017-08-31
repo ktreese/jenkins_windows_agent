@@ -13,7 +13,7 @@
     {"name":"lwf/remote_file","version_requirement":">= 1.0.1"},
     {"name":"counsyl/windows","version_requirement":">= 1.0.2"},
     {"name":"badgerious/windows_env","version_requirement":">= 2.2.2"},
-    {"name":"ktreese/nssm","version_requirement":">= 1.0.0"}
+    {"name":"ktreese/nssm","version_requirement":">= 1.1.0"}
   ],
   "operatingsystem_support": [
     {"operatingsystem": "Windows"}
