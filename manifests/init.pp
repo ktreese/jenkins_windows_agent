@@ -137,7 +137,7 @@ class jenkins_windows_agent (
     ensure       => present,
     program      => $java,
     service_name => $service_name,
-    require      => Class[Windows::Nssm],
+    require      => Class['windows::nssm'],
   }
 
   # Service Management
