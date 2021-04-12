@@ -160,13 +160,18 @@ class jenkins_windows_agent (
   $client_arg_ssl_verify = $disable_ssl_verification  ? { true => '-disableSslVerification', default => ''}
   $client_args = "${client_arg_unique_id} ${client_arg_ssl_verify} ${swarm_client_args}"
 
+
+  file {"${agent_drive}${agent_home}labels.txt":
+    content => $swarm_labels,
+  }
+
   # Service Management
   nssm::set { $service_name:
     service_user        => $service_user,
     service_pass        => $service_pass,
     service_interactive => $service_interactive,
     create_user         => $create_user,
-    app_parameters      => "-jar ${agent_drive}${agent_home}${client_jar} -mode ${swarm_mode} -executors ${swarm_executors} -username ${jenkins_master_user} -password ${jenkins_master_pass} -master ${jenkins_master_url} -labels \\\"${swarm_labels}\\\" -fsroot ${agent_drive}${agent_home} ${client_args}",
+    app_parameters      => "-jar ${agent_drive}${agent_home}${client_jar} -mode ${swarm_mode} -executors ${swarm_executors} -username ${jenkins_master_user} -password ${jenkins_master_pass} -master ${jenkins_master_url} -labelsFile ${agent_drive}${agent_home}labels.txt -fsroot ${agent_drive}${agent_home} ${client_args}",
     require             => Nssm::Install[$service_name],
     notify              => Service[$service_name],
   }
