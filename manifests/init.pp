@@ -10,15 +10,28 @@
 #   File source for jenkins slave jar. Default pulls from https://repo.jenkins-ci.org
 #
 # [*version*]
-#   The version of the swarm client code. Default is '1.22'. This should match the plugin version on the master
+#   The version of the swarm client code. Default is '3.3'. This should match the plugin version on the master
 #
 # [*verify_peer*]
 #   Boolean: defaults to false
 #   Used in remote_file type to control whether or not to require SSL verification of the the remote server
 #
 # [*swarm_labels*]
-#   Labels to associate this agent with
+#   Labels to associate this agent with.  (Space-delimited string)
 #   Defaults to 'windows'
+#
+# [*disable_clients_unique_id*]
+#   Maps to -disableClientsUniqueId in https://plugins.jenkins.io/swarm/
+#   Defaults to false
+#
+# [*disable_ssl_verification*]
+#   Maps to -disableSslVerification in https://plugins.jenkins.io/swarm/
+#   Defaults to true (for historical reasons)
+#
+# [*swarm_client_args*]
+#   Any other valid args to swarm client not covered by the above, see https://plugins.jenkins.io/swarm/
+#   Example: '-maxRetryInterval 4 -deleteExistingClients'
+#   Defaults to empty string
 #
 # [*jenkins_master_user*]
 #   The user account needed to authenticate agains the Jenkins Master machine
@@ -51,27 +64,29 @@
 #
 #
 class jenkins_windows_agent (
-  $client_source            = $::jenkins_windows_agent::params::client_source,
-  $version                  = $::jenkins_windows_agent::params::version,
-  $verify_peer              = $::jenkins_windows_agent::params::verify_peer,
-  $swarm_mode               = $::jenkins_windows_agent::params::swarm_mode,
-  $swarm_executors          = $::jenkins_windows_agent::params::swarm_executors,
-  $swarm_labels             = $::jenkins_windows_agent::params::swarm_labels,
-  $disable_ssl_verification = $::jenkins_windows_agent::params::disable_ssl_verification,
-  $agent_drive              = $::jenkins_windows_agent::params::agent_drive,
-  $agent_home               = $::jenkins_windows_agent::params::agent_home,
-  $jenkins_dirs             = $::jenkins_windows_agent::params::jenkins_dirs,
-  $jenkins_master_url       = $::jenkins_windows_agent::params::jenkins_master_url,
-  $jenkins_master_user      = $::jenkins_windows_agent::params::jenkins_master_user,
-  $jenkins_master_pass      = $::jenkins_windows_agent::params::jenkins_master_pass,
-  $service_name             = $::jenkins_windows_agent::params::service_name,
-  $service_user             = $::jenkins_windows_agent::params::service_user,
-  $service_pass             = $::jenkins_windows_agent::params::service_pass,
-  $service_interactive      = $::jenkins_windows_agent::params::service_interactive,
-  $create_user              = $::jenkins_windows_agent::params::create_user,
-  $jdk                      = $::jenkins_windows_agent::params::jdk,
-  $jdk_choco_version        = $::jenkins_windows_agent::params::jdk_choco_version,
-  $java                     = $::jenkins_windows_agent::params::java,
+  $client_source             = $::jenkins_windows_agent::params::client_source,
+  $version                   = $::jenkins_windows_agent::params::version,
+  $verify_peer               = $::jenkins_windows_agent::params::verify_peer,
+  $swarm_mode                = $::jenkins_windows_agent::params::swarm_mode,
+  $swarm_executors           = $::jenkins_windows_agent::params::swarm_executors,
+  $swarm_labels              = $::jenkins_windows_agent::params::swarm_labels,
+  $disable_clients_unique_id = $::jenkins_windows_agent::params::disable_clients_unique_id,
+  $disable_ssl_verification  = $::jenkins_windows_agent::params::disable_ssl_verification,
+  $swarm_client_args         = $::jenkins_windows_agent::params::swarm_client_args,
+  $agent_drive               = $::jenkins_windows_agent::params::agent_drive,
+  $agent_home                = $::jenkins_windows_agent::params::agent_home,
+  $jenkins_dirs              = $::jenkins_windows_agent::params::jenkins_dirs,
+  $jenkins_master_url        = $::jenkins_windows_agent::params::jenkins_master_url,
+  $jenkins_master_user       = $::jenkins_windows_agent::params::jenkins_master_user,
+  $jenkins_master_pass       = $::jenkins_windows_agent::params::jenkins_master_pass,
+  $service_name              = $::jenkins_windows_agent::params::service_name,
+  $service_user              = $::jenkins_windows_agent::params::service_user,
+  $service_pass              = $::jenkins_windows_agent::params::service_pass,
+  $service_interactive       = $::jenkins_windows_agent::params::service_interactive,
+  $create_user               = $::jenkins_windows_agent::params::create_user,
+  $jdk                       = $::jenkins_windows_agent::params::jdk,
+  $jdk_choco_version         = $::jenkins_windows_agent::params::jdk_choco_version,
+  $java                      = $::jenkins_windows_agent::params::java,
 ) inherits ::jenkins_windows_agent::params {
 
   # versioncmp function returns -1 if 2.2 is less than $version
@@ -140,13 +155,23 @@ class jenkins_windows_agent (
     require      => Class['windows::nssm'],
   }
 
+  # generate swarm client args
+  $client_arg_unique_id  = $disable_clients_unique_id ? { true => '-disableClientsUniqueId', default => ''}
+  $client_arg_ssl_verify = $disable_ssl_verification  ? { true => '-disableSslVerification', default => ''}
+  $client_args = "${client_arg_unique_id} ${client_arg_ssl_verify} ${swarm_client_args}"
+
+
+  file {"${agent_drive}${agent_home}labels.txt":
+    content => $swarm_labels,
+  }
+
   # Service Management
   nssm::set { $service_name:
     service_user        => $service_user,
     service_pass        => $service_pass,
     service_interactive => $service_interactive,
     create_user         => $create_user,
-    app_parameters      => "-jar ${agent_drive}${agent_home}${client_jar} -mode ${swarm_mode} -executors ${swarm_executors} -username ${jenkins_master_user} -password ${jenkins_master_pass} -master ${jenkins_master_url} -labels ${swarm_labels} -fsroot ${agent_drive}${agent_home} ${disable_ssl_verification}",
+    app_parameters      => "-jar ${agent_drive}${agent_home}${client_jar} -mode ${swarm_mode} -executors ${swarm_executors} -username ${jenkins_master_user} -password ${jenkins_master_pass} -master ${jenkins_master_url} -labelsFile ${agent_drive}${agent_home}labels.txt -fsroot ${agent_drive}${agent_home} ${client_args}",
     require             => Nssm::Install[$service_name],
     notify              => Service[$service_name],
   }
